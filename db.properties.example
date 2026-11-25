@@ -1,0 +1,17 @@
+# CineFlow Database Configuration Example
+db.url=jdbc:mysql://localhost:3306/cineflow_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata&characterEncoding=UTF-8
+db.user=root
+db.password=YOUR_MYSQL_PASSWORD
+
+# CineFlow v2 Config
+ticket.secret=cineflow-v2-production-hmac-secret-key-32b
+hold.minutes=5
+waitlist.offer.minutes=10
+pricing.floor=-0.20
+pricing.cap=0.50
+entry.window.before.minutes=60
+entry.window.after.minutes=30
+
+# Razorpay Real-Time Gateway Credentials
+razorpay.key.id=YOUR_RAZORPAY_KEY_ID
+razorpay.key.secret=YOUR_RAZORPAY_KEY_SECRET

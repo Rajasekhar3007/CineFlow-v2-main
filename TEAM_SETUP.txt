@@ -1,0 +1,104 @@
+CINEFLOW - TEAM SETUP (Windows)
+
+This ZIP includes the Java source, Maven build, SQL schema and demo data,
+and poster images. Each teammate uses their own local MySQL database.
+The sender's database password, live database, Git history, and compiled
+build files are not included. Start here rather than copying the sender's paths.
+
+1. INSTALL THE TOOLS (once)
+   - JDK 21 (a JDK, not only a JRE).
+   - Apache Maven 3.9 or newer. Add its bin directory to PATH.
+   - MySQL Server 8.0 and MySQL Workbench. Workbench alone is not a server.
+   Remember the MySQL root password and port chosen during installation.
+   Use JAVA_HOME pointing to the JDK 21 folder, with its bin directory on PATH.
+   Open a NEW normal PowerShell window and check:
+
+       java -version
+       mvn -version
+
+   Both must work; Maven should report Java 21. Internet access is needed
+   for Maven to download dependencies on the first build.
+   JavaFX and the JDBC driver are downloaded automatically by Maven.
+   Official Maven installation guide: https://maven.apache.org/install.html
+
+2. EXTRACT THE ZIP
+   Extract all files, then open the cineflow folder containing pom.xml.
+   Example PowerShell command (replace the path with your extracted folder):
+
+       cd "C:\Projects\cineflow"
+
+3. INITIALIZE YOUR LOCAL DATABASE (once, using Workbench)
+   Start MySQL Server and connect in Workbench using YOUR local root password.
+   For a fresh setup:
+   Open database/schema.sql with File > Open SQL Script.
+   Execute the ENTIRE file (no text selected; use the execute-all lightning button).
+   Then open database/seed_data.sql and execute the entire file.
+   (Note: schema.sql contains the complete database definition with all 23 tables and features).
+   Check the Action Output for errors before continuing.
+
+   IMPORTANT: These scripts recreate/clear CineFlow tables. Use them for a
+   fresh local setup only. Do not rerun them on a database whose data you need.
+   They do not need to run every time you launch the app.
+
+   Run this query in Workbench to confirm the demo users exist:
+       SELECT username, role FROM cineflow_db.users;
+   Expected: admin, john_doe, jane_smith.
+
+   Workbench script help:
+   https://dev.mysql.com/doc/workbench/en/wb-sql-editor-toolbar.html
+
+4. SET YOUR DATABASE CONNECTION
+   In PowerShell inside the cineflow folder:
+
+       Copy-Item db.properties.example db.properties
+       notepad db.properties
+
+   Set db.password to YOUR MySQL password, without surrounding quotes.
+   Set db.user to your local database user (usually root for this exercise).
+   Set the port in db.url to YOUR MySQL port (the default is 3306).
+   The example uses 3306; you only change this if your local server uses a different port.
+   Keep the database name cineflow_db and the URL options unchanged.
+   Save the file. Do not share db.properties with teammates.
+   Java .properties syntax: write a literal backslash in a password as \\.
+   For non-ASCII characters use Java Unicode escapes such as \u00e9 for e-acute.
+
+5. CHECK THE CONNECTION AND DEMO LOGINS
+   Run in the cineflow folder:
+
+       mvn "-Dtest=DBConnectionTest,AuthServiceTest#testAdminLoginSuccess+testCustomerLoginSuccess" test
+
+   Expected: Tests run: 6, Failures: 0, Errors: 0, BUILD SUCCESS.
+   These selected checks do not create test users or bookings.
+
+6. LAUNCH
+       mvn compile javafx:run
+
+   Alternatively, double-click run.bat after completing setup.
+   Normal PowerShell is enough to launch the application.
+   Keep MySQL Server running while using the app.
+
+7. SIGN IN TO CINEFLOW
+   Admin:    username admin       password Admin@123
+   Customer: username john_doe    password Customer@123
+   Customer: username jane_smith  password Customer@123
+   These are application demo passwords, separate from your MySQL password.
+   You can also click Admin Account / Customer Account on the login screen.
+
+EVERYDAY STARTUP
+   Start MySQL Server if it is stopped, open PowerShell in the project folder,
+   and run: mvn compile javafx:run
+   Do not reimport the database scripts.
+
+TROUBLESHOOTING
+   mvn not recognized: add Maven's bin folder to PATH; reopen PowerShell.
+   release version 21 not supported: fix JAVA_HOME; check mvn -version.
+   Communications link failure: check MySQL is running and db.url uses its port.
+   Access denied for root: correct the database password in db.properties.
+   Unknown database cineflow_db: complete step 3 on the same MySQL instance.
+   Invalid username or password in the app: use the demo passwords in step 7.
+   Missing movies/users: check both SQL scripts completed without errors.
+
+macOS / Linux: install the same JDK, Maven and MySQL requirements, initialize
+the SQL scripts using Workbench, use 'cp db.properties.example db.properties',
+edit the connection settings, and run the same Maven commands in a terminal.
+The Windows .bat/.ps1 launchers are not needed there.
